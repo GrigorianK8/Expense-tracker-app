@@ -1,40 +1,43 @@
 package com.grigoriank.expenseTracker.controller;
 
-import com.grigoriank.expenseTracker.dto.ExpenseDto;
-import com.grigoriank.expenseTracker.entity.Expense;
-import com.grigoriank.expenseTracker.service.ExpenseService;
+import com.grigoriank.expenseTracker.dto.IncomeDto;
+import com.grigoriank.expenseTracker.entity.Income;
+import com.grigoriank.expenseTracker.service.IncomeService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.html.parser.Entity;
+
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin("*")
-@RequestMapping("/api/expense")
-public class ExpenseController {
+@RequestMapping("/api/income")
+public class IncomeController {
 
-    private final ExpenseService expenseService;
+    private final IncomeService incomeService;
 
     @PostMapping
-    public ResponseEntity<?> postExpense(@RequestBody ExpenseDto dto) {
-        Expense createdExpense = expenseService.postExpense(dto);
-        if (createdExpense == null) {
+    public ResponseEntity<?> postIncome(@RequestBody IncomeDto dto) {
+        Income createdIncome = incomeService.postIncome(dto);
+        if (createdIncome == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdExpense);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdIncome);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<?> getAllExpense() {
-        return ResponseEntity.ok(expenseService.getAllExpenses());
+    public ResponseEntity<?> getAll() {
+        return ResponseEntity.ok(incomeService.getAllIncomes());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getExpenseById(@PathVariable Long id) {
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateIncome(@PathVariable Long id,
+                                          @RequestBody IncomeDto dto) {
         try {
-            return ResponseEntity.ok(expenseService.getExpenseById(id));
+            return ResponseEntity.ok(incomeService.uodateIncome(id, dto));
         } catch (EntityNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         } catch (Exception ex) {
@@ -42,11 +45,10 @@ public class ExpenseController {
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateExpense(@PathVariable Long id,
-                                           @RequestBody ExpenseDto dto) {
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getIncomeById(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(expenseService.updateExpense(id, dto));
+            return ResponseEntity.ok(incomeService.getIncomeById(id));
         } catch (EntityNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         } catch (Exception ex) {
@@ -55,9 +57,9 @@ public class ExpenseController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteExpense(@PathVariable Long id) {
+    public ResponseEntity<?> deleteIncome(@PathVariable Long id) {
         try {
-            expenseService.deleteExpense(id);
+            incomeService.deleteIncome(id);
             return ResponseEntity.ok(null);
         } catch (EntityNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
